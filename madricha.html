@@ -58,12 +58,10 @@
     <select id="testFilter">
         <option value=""> כל המבחנים</option>
     </select>
-<input 
-    id="dateFilter" 
-    type="text"
-    placeholder="תאריך"
-    onfocus="this.type='date'"
-    onblur="if(!this.value)this.type='text'">
+<div class="date-wrapper">
+    <input id="dateFilter" type="date">
+    <span>תאריך</span>
+</div>
 </div>
 </div>
 
@@ -537,6 +535,23 @@ line-height: 0.5;
     box-shadow:0 8px 18px rgba(0,0,0,.12);
 
 }
+.date-wrapper {
+    position: relative;
+}
+
+.date-wrapper span {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #304d2f;
+    pointer-events: none;
+}
+
+.date-wrapper input:valid + span,
+.date-wrapper input:focus + span {
+    display: none;
+}
 </style>
 <script type="module">
 
@@ -821,10 +836,13 @@ function filterResults(){
     document.getElementById("testFilter")
     .value;
 
-    const date =
-    document.getElementById("dateFilter")
-    .value;
+   let date = document.getElementById("dateFilter").value;
 
+if (date) {
+    const d = new Date(date);
+
+    date = d.toLocaleDateString("he-IL");
+}
     let filtered =
     allResults.filter(item=>{
 
@@ -848,7 +866,7 @@ test === "" ||
 
             okDate=
             (item.date || "")
-            .includes(date);
+            okDate = (item.date || "") === date;
 
         }
 
