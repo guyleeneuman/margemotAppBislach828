@@ -338,17 +338,16 @@ shareBtn.onclick = async () => {
         { type: "image/png" }
     );
 
-    if (navigator.canShare) {
-
-        navigator.share({
-
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    try {
+        await navigator.share({
             files: [file],
-
             title: "הנה הציור שלי על המרגמה, אין על קורס מרגמות בביסלח!"
-
         });
-
+    } catch (err) {
+        console.log(err);
     }
+}
 
 };
 
