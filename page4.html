@@ -175,7 +175,7 @@ let erase = false;
 // let drawing = false;
 let lastPoint = null;
 let pendingPoint = null;
-
+let activePointer = null;
 
 function getPos(e){
 
@@ -201,8 +201,9 @@ function start(e){
 
     lastPoint = getPos(e);
 
-    canvas.setPointerCapture(e.pointerId);
+activePointer = e.pointerId;
 
+canvas.setPointerCapture(e.pointerId);
 }
 
 
@@ -211,10 +212,11 @@ function draw(e){
 
     if(!drawing) return;
 
+    if(e.pointerId !== activePointer) return;
+
     pendingPoint = getPos(e);
 
 }
-
 
 
 function smoothDraw(){
@@ -264,12 +266,17 @@ ctx.imageSmoothingEnabled = true;
 smoothDraw();
 
 
+function stop(e){
 
-function stop(){
+    drawing = false;
 
-    drawing=false;
+    pendingPoint = null;
 
-    lastPoint=null;
+    lastPoint = null;
+
+    if(e && canvas.hasPointerCapture(e.pointerId)){
+        canvas.releasePointerCapture(e.pointerId);
+    }
 
 }
 
@@ -277,8 +284,9 @@ function stop(){
 
 canvas.addEventListener("pointerdown", start);
 canvas.addEventListener("pointermove", draw);
-window.addEventListener("pointerup", stop);
-window.addEventListener("pointercancel", stop);
+canvas.addEventListener("pointerup", stop);
+canvas.addEventListener("pointercancel", stop);
+canvas.addEventListener("pointerleave", stop);
 
 /* ---------- צבע ---------- */
 
