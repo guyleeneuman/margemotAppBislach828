@@ -333,7 +333,7 @@ shareBtn.onclick = async () => {
     out.toBlob(async (blob)=>{
 
         if(!blob){
-            alert("בעיה ביצירת תמונה");
+            // alert("בעיה ביצירת תמונה");
             return;
         }
 
@@ -350,8 +350,12 @@ shareBtn.onclick = async () => {
         try {
 
             await navigator.share({
-                files:[file]
-            });
+
+    files:[file],
+
+    title:"הנה הציור שלי על המרגמה, אין על קורס מרגמות בביסלח!"
+
+});
 
 
         } catch(err){
