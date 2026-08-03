@@ -159,7 +159,9 @@
 
 
             <!-- מופיע רק מתחת ל90 -->
-
+<button id="reviewBtn">
+    צפייה בדוח תשובות
+</button>
             <button id="retryBtn">
 
                 ביצוע מבחן חוזר
@@ -185,7 +187,25 @@
 
 
 
+<!-- פופאפ דוח תשובות -->
 
+<div id="reviewPopup" class="popup">
+
+    <div class="popupBox">
+
+        <h2>
+            דוח תשובות
+        </h2>
+
+        <div id="reviewContent"></div>
+
+        <button id="closeReviewBtn">
+            סגירה
+        </button>
+
+    </div>
+
+</div>
 
 
     <!-- אזור גרירה -->
@@ -2062,7 +2082,7 @@ let score=0;
 
 let selectedAnswers=[];
 
-
+let review = [];
 
 const questionTitle =
 document.getElementById("questionTitle");
@@ -2142,13 +2162,17 @@ createAnswerButton(
 answer,
 ()=>{
 
+let scoreAdd = 0;
 
 if(index===q.correct){
-
-score+=10;
-
+    score += 10;
+    scoreAdd = 10;
 }
 
+review.push({
+    question: q.question,
+    score: scoreAdd
+});
 
 nextQuestion();
 
@@ -2279,10 +2303,17 @@ let b=[...q.correct].sort();
 
 
 
-if(JSON.stringify(a)===JSON.stringify(b))
-score+=10;
+let scoreAdd = 0;
 
+if(JSON.stringify(a)===JSON.stringify(b)){
+    score += 10;
+    scoreAdd = 10;
+}
 
+review.push({
+    question:q.question,
+    score:scoreAdd
+});
 
 nextQuestion();
 
@@ -2835,17 +2866,21 @@ function addToBox(box,value){
 
 
 
+let scoreAdd = Math.round(
+(
+totalCorrect /
+totalAnswers
+) * 10
+);
 
-        score += Math.round(
-            (
-                totalCorrect /
-                totalAnswers
-            ) * 10
-        );
+score += scoreAdd;
 
+review.push({
+    question:q.question,
+    score:scoreAdd
+});
 
-
-        nextQuestion();
+nextQuestion();
 
 
     };
@@ -3416,17 +3451,21 @@ function createSentenceDrag(q){
 
 
 
+let scoreAdd = Math.round(
+(
+correct /
+q.correct.length
+) * 10
+);
 
-        score += Math.round(
-            (
-                correct /
-                q.correct.length
-            ) * 10
-        );
+score += scoreAdd;
 
+review.push({
+    question:q.question,
+    score:scoreAdd
+});
 
-
-        nextQuestion();
+nextQuestion();
 
 
     };
@@ -3557,7 +3596,7 @@ currentQuestion=0;
 
 score=0;
 
-
+review = [];
 document
 .getElementById("resultPopup")
 .classList.remove("show");
@@ -3686,6 +3725,55 @@ await firebasePush(
     }
 
 }
+document.getElementById("reviewBtn").onclick = ()=>{
+
+
+    let content = document.getElementById("reviewContent");
+
+
+    content.innerHTML="";
+
+
+    review.forEach((item,index)=>{
+
+
+        content.innerHTML +=
+        `
+
+        <div class="reviewItem">
+
+            <b>שאלה ${index+1}</b>
+
+            <p>
+            ${item.question}
+            </p>
+
+            <p>
+            ניקוד:
+            ${item.score}/10
+            </p>
+
+        </div>
+
+        `;
+
+
+    });
+
+
+    document
+    .getElementById("reviewPopup")
+    .classList.add("show");
+
+
+};
+document.getElementById("closeReviewBtn").onclick = ()=>{
+
+    document
+    .getElementById("reviewPopup")
+    .classList.remove("show");
+
+};
     loadQuestion();
 
 
@@ -4235,7 +4323,8 @@ await firebasePush(
 
 
 #retryBtn,
-#finishBtn{
+#finishBtn,
+#reviewBtn{
 
     width:90%;
 
@@ -4263,7 +4352,11 @@ await firebasePush(
 
 }
 
+#reviewBtn{
+    background:#516b42;
 
+    color:#EFFEFF;
+}
 
 #finishBtn{
 
@@ -4680,6 +4773,54 @@ margin:5px;
         opacity:1;
 
     }
+
+}
+
+#reviewContent{
+
+    max-height:50vh;
+
+    overflow-y:auto;
+
+    text-align:right;
+
+    font-size:1.1rem;
+
+    color:#304d2f;
+
+}
+
+
+.reviewItem{
+
+    background:#dce7d0;
+
+    border-radius:15px;
+
+    padding:15px;
+
+    margin:10px 0;
+
+}
+#closeReviewBtn{
+
+    width:90%;
+
+    height:50px;
+
+    border:none;
+
+    border-radius:20px;
+
+    margin-top:15px;
+
+    background:#516b42;
+
+    color:#EFFEFF;
+
+    font-family:secular;
+
+    font-size:1.4rem;
 
 }
 </style>
