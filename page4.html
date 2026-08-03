@@ -330,23 +330,40 @@ shareBtn.onclick = async () => {
     octx.drawImage(img, 0, 0, out.width, out.height);
     octx.drawImage(canvas, 0, 0);
 
-    const blob = await new Promise(r => out.toBlob(r));
+
+    const blob = await new Promise(resolve =>
+        out.toBlob(resolve, "image/png")
+    );
+
 
     const file = new File(
         [blob],
-        "drawing.png",
-        { type: "image/png" }
+        "margema.png",
+        {
+            type:"image/png"
+        }
     );
 
-    if (navigator.canShare) {
 
-        navigator.share({
+    try {
 
-            files: [file],
+        if (navigator.share && navigator.canShare({files:[file]})) {
 
-            title: "הנה הציור שלי על המרגמה, אין על קורס מרגמות בביסלח!"
+            await navigator.share({
 
-        });
+                files:[file],
+
+                title:"המרגמה שלי",
+
+                text:"ציירתי על המרגמה הדיגיטלית של ביסל״ח 🚀"
+
+            });
+
+        }
+
+    } catch(err){
+
+        console.log("share error:", err);
 
     }
 
