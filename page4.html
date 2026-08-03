@@ -315,42 +315,38 @@ clearBtn.onclick = () => {
 
 shareBtn.onclick = async () => {
 
-    // alert("נלחץ");
+    const out = document.createElement("canvas");
 
-    try {
+    out.width = canvas.width;
+    out.height = canvas.height;
 
-        const out = document.createElement("canvas");
+    const octx = out.getContext("2d");
 
-        out.width = canvas.width;
-        out.height = canvas.height;
+    octx.fillStyle = "#fff";
+    octx.fillRect(0, 0, out.width, out.height);
 
-        const octx = out.getContext("2d");
+    const img = document.getElementById("baseImage");
 
-        octx.fillStyle = "#fff";
-        octx.fillRect(0, 0, out.width, out.height);
+    octx.drawImage(img, 0, 0, out.width, out.height);
+    octx.drawImage(canvas, 0, 0);
 
-        const img = document.getElementById("baseImage");
+    const blob = await new Promise(r => out.toBlob(r));
 
-        octx.drawImage(img, 0, 0, out.width, out.height);
-        octx.drawImage(canvas, 0, 0);
+    const file = new File(
+        [blob],
+        "drawing.png",
+        { type: "image/png" }
+    );
 
-        const blob = await new Promise(resolve => out.toBlob(resolve));
+    if (navigator.canShare) {
 
-        // alert(blob ? "blob OK" : "blob FAIL");
+        navigator.share({
 
-        const file = new File([blob], "drawing.png", {
-            type: "image/png"
-        });
-
-
-        await navigator.share({
             files: [file],
-            title: "test"
+
+            title: "הנה הציור שלי על המרגמה, אין על קורס מרגמות בביסלח!"
+
         });
-
-    } catch (e) {
-
-        // alert(e.message);
 
     }
 
