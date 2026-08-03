@@ -315,7 +315,7 @@ clearBtn.onclick = () => {
 
 shareBtn.onclick = async () => {
 
-    alert("נלחץ");
+    // alert("נלחץ");
 
     try {
 
@@ -336,7 +336,7 @@ shareBtn.onclick = async () => {
 
         const blob = await new Promise(resolve => out.toBlob(resolve));
 
-        alert(blob ? "blob OK" : "blob FAIL");
+        // alert(blob ? "blob OK" : "blob FAIL");
 
         const file = new File([blob], "drawing.png", {
             type: "image/png"
