@@ -175,7 +175,7 @@ let erase = false;
 // let drawing = false;
 let lastPoint = null;
 let pendingPoint = null;
-let activePointer = null;
+
 
 function getPos(e){
 
@@ -201,9 +201,8 @@ function start(e){
 
     lastPoint = getPos(e);
 
-activePointer = e.pointerId;
+    canvas.setPointerCapture(e.pointerId);
 
-canvas.setPointerCapture(e.pointerId);
 }
 
 
@@ -212,11 +211,10 @@ function draw(e){
 
     if(!drawing) return;
 
-    if(e.pointerId !== activePointer) return;
-
     pendingPoint = getPos(e);
 
 }
+
 
 
 function smoothDraw(){
@@ -284,9 +282,8 @@ function stop(e){
 
 canvas.addEventListener("pointerdown", start);
 canvas.addEventListener("pointermove", draw);
-canvas.addEventListener("pointerup", stop);
-canvas.addEventListener("pointercancel", stop);
-canvas.addEventListener("pointerleave", stop);
+window.addEventListener("pointerup", stop);
+window.addEventListener("pointercancel", stop);
 
 /* ---------- צבע ---------- */
 
