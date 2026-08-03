@@ -342,7 +342,6 @@ shareBtn.onclick = async () => {
             type: "image/png"
         });
 
-        alert(navigator.canShare({ files: [file] }));
 
         await navigator.share({
             files: [file],
@@ -351,7 +350,7 @@ shareBtn.onclick = async () => {
 
     } catch (e) {
 
-        alert(e.message);
+        // alert(e.message);
 
     }
 
