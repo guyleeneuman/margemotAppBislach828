@@ -312,7 +312,6 @@ clearBtn.onclick = () => {
 };
 
 /* ---------- שיתוף ---------- */
-
 shareBtn.onclick = async () => {
 
     const out = document.createElement("canvas");
@@ -323,51 +322,49 @@ shareBtn.onclick = async () => {
     const octx = out.getContext("2d");
 
     octx.fillStyle = "#fff";
-    octx.fillRect(0, 0, out.width, out.height);
+    octx.fillRect(0,0,out.width,out.height);
 
     const img = document.getElementById("baseImage");
 
-    octx.drawImage(img, 0, 0, out.width, out.height);
-    octx.drawImage(canvas, 0, 0);
+    octx.drawImage(img,0,0,out.width,out.height);
+    octx.drawImage(canvas,0,0);
 
 
-    const blob = await new Promise(resolve =>
-        out.toBlob(resolve, "image/png")
-    );
+    out.toBlob(async (blob)=>{
 
-
-    const file = new File(
-        [blob],
-        "margema.png",
-        {
-            type:"image/png"
+        if(!blob){
+            alert("בעיה ביצירת תמונה");
+            return;
         }
-    );
 
 
-    try {
+        const file = new File(
+            [blob],
+            "margema.png",
+            {
+                type:"image/png"
+            }
+        );
 
-        if (navigator.share && navigator.canShare({files:[file]})) {
+
+        try {
 
             await navigator.share({
-
-                files:[file],
-
-                title:"המרגמה שלי",
-
-                text:"הנה הציור שלי על המרגמה, אין על קורס מרגמות בביסלח!"
-
+                files:[file]
             });
+
+
+        } catch(err){
+
+            console.log(err);
 
         }
 
-    } catch(err){
 
-        console.log("share error:", err);
-
-    }
+    },"image/png");
 
 };
+
 
 /* ---------- גודל עט ---------- */
 
@@ -687,7 +684,7 @@ infoPopup.onclick = e => {
 
     box-shadow:0 8px 25px rgba(0,0,0,.25);
 
-    z-index:500;
+    z-index:99999999999;
 }
 
 
