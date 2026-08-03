@@ -172,50 +172,105 @@ let drawing = false;
 let color = "#516b42";
 let size = 5;
 let erase = false;
+// let drawing = false;
+let lastPoint = null;
+let pendingPoint = null;
 
-function getPos(e) {
+
+function getPos(e){
+
+    const rect = canvas.getBoundingClientRect();
+
     return {
-        x: e.offsetX,
-        y: e.offsetY
+
+        x: e.clientX - rect.left,
+
+        y: e.clientY - rect.top
+
     };
+
 }
 
-/* ---------- ציור ---------- */
 
-function start(e) {
+
+function start(e){
 
     e.preventDefault();
 
     drawing = true;
 
-    const p = getPos(e);
+    lastPoint = getPos(e);
 
-    ctx.beginPath();
-    ctx.moveTo(p.x, p.y);
+    canvas.setPointerCapture(e.pointerId);
+
 }
 
-function draw(e) {
 
-    if (!drawing) return;
 
-    e.preventDefault();
+function draw(e){
 
-    const p = getPos(e);
+    if(!drawing) return;
 
-    ctx.globalCompositeOperation = erase
+    pendingPoint = getPos(e);
+
+}
+
+
+
+function smoothDraw(){
+
+    if(pendingPoint && lastPoint){
+
+
+        ctx.globalCompositeOperation = erase
         ? "destination-out"
         : "source-over";
 
-    ctx.strokeStyle = color;
-    ctx.lineWidth = erase ? 25 : size;
 
-    ctx.lineTo(p.x, p.y);
-    ctx.stroke();
+        ctx.strokeStyle = color;
+
+        ctx.lineWidth = erase ? 25 : size;
+
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            lastPoint.x,
+            lastPoint.y
+        );
+
+ctx.imageSmoothingEnabled = true;
+        ctx.lineTo(
+            pendingPoint.x,
+            pendingPoint.y
+        );
+
+
+        ctx.stroke();
+
+
+        lastPoint = pendingPoint;
+
+        pendingPoint=null;
+
+    }
+
+
+    requestAnimationFrame(smoothDraw);
+
 }
 
-function stop() {
 
-    drawing = false;
+smoothDraw();
+
+
+
+function stop(){
+
+    drawing=false;
+
+    lastPoint=null;
+
 }
 
 /* ---------- Pointer Events (עובד גם במחשב וגם באייפון) ---------- */
@@ -239,7 +294,11 @@ eraserBtn.onclick = () => {
 
     erase = true;
 };
+penBtn.onclick = ()=>{
 
+    erase=false;
+
+};
 /* ---------- ניקוי ---------- */
 
 clearBtn.onclick = () => {
@@ -773,6 +832,18 @@ infoPopup.onclick = e => {
     font-size: 1.8rem;
     font-weight: 600;
     font-family: secular;
+}
+
+#paintCanvas{
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    touch-action:none;
+    z-index:2;
+
+    will-change: transform;
 }
 </style>
 </html>
