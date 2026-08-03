@@ -315,39 +315,45 @@ clearBtn.onclick = () => {
 
 shareBtn.onclick = async () => {
 
-    const out = document.createElement("canvas");
+    alert("נלחץ");
 
-    out.width = canvas.width;
-    out.height = canvas.height;
-
-    const octx = out.getContext("2d");
-
-    octx.fillStyle = "#fff";
-    octx.fillRect(0, 0, out.width, out.height);
-
-    const img = document.getElementById("baseImage");
-
-    octx.drawImage(img, 0, 0, out.width, out.height);
-    octx.drawImage(canvas, 0, 0);
-
-    const blob = await new Promise(r => out.toBlob(r));
-
-    const file = new File(
-        [blob],
-        "drawing.png",
-        { type: "image/png" }
-    );
-
-    if (navigator.canShare && navigator.canShare({ files: [file] })) {
     try {
+
+        const out = document.createElement("canvas");
+
+        out.width = canvas.width;
+        out.height = canvas.height;
+
+        const octx = out.getContext("2d");
+
+        octx.fillStyle = "#fff";
+        octx.fillRect(0, 0, out.width, out.height);
+
+        const img = document.getElementById("baseImage");
+
+        octx.drawImage(img, 0, 0, out.width, out.height);
+        octx.drawImage(canvas, 0, 0);
+
+        const blob = await new Promise(resolve => out.toBlob(resolve));
+
+        alert(blob ? "blob OK" : "blob FAIL");
+
+        const file = new File([blob], "drawing.png", {
+            type: "image/png"
+        });
+
+        alert(navigator.canShare({ files: [file] }));
+
         await navigator.share({
             files: [file],
-            title: "הנה הציור שלי על המרגמה, אין על קורס מרגמות בביסלח!"
+            title: "test"
         });
-    } catch (err) {
-        console.log(err);
+
+    } catch (e) {
+
+        alert(e.message);
+
     }
-}
 
 };
 
